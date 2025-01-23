@@ -18,17 +18,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // WhatsApp Webhook Verification
 app.get("/webhook", (req, res) => {
+    console.log("GET request received at /webhook");
+    console.log("Query Parameters:", req.query);
+  
     const mode = req.query["hub.mode"];
     const token = req.query["hub.verify_token"];
     const challenge = req.query["hub.challenge"];
-
-    if (mode === "subscribe" && token === VERIFY_TOKEN) {
-        console.log("Webhook verified!");
-        res.status(200).send(challenge);
+  
+    if (mode && token === process.env.VERIFY_TOKEN) {
+      console.log("Verification successful!");
+      res.status(200).send(challenge);
     } else {
-        res.status(403).send("Verification failed.");
+      console.log("Verification failed!");
+      res.status(403).send("Verification failed.");
     }
-});
+  });
+  
 
 // WhatsApp Webhook Endpoint
 app.post("/webhook", async (req, res) => {
